@@ -9,7 +9,7 @@ Live site: https://eit-gbi.github.io/igv-browser/
 - Human hg38 with RefSeq genes as the starting view.
 - Human hg19 and mouse mm39 assembly selection.
 - Quick navigation to TP53, EGFR and BRCA1 on hg38.
-- Remote track URLs with optional explicit index URLs.
+- Remote track URLs with optional explicit formats and index URLs.
 - Local track files with paired indexes, read directly in the browser.
 - JSON session import/export, including custom references.
 - Shareable links containing the current session in the URL fragment.

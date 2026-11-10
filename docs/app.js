@@ -29,7 +29,7 @@ async function start() {
     await browser.loadSessionObject(JSON.parse(decodeURIComponent(location.hash.slice(9))));
   }
   updateAssembly();
-  document.querySelectorAll(".toolbar button, .toolbar input, .toolbar select, aside button, aside input").forEach((control) => { control.disabled = false; });
+  document.querySelectorAll(".toolbar button, .toolbar input, .toolbar select, aside button, aside input, aside select").forEach((control) => { control.disabled = false; });
   updateAssembly();
   window.igvBrowser = browser;
   status("Ready · Reference genes loaded. Add a track to explore your data.");
@@ -54,6 +54,7 @@ $("track-form").addEventListener("submit", (event) => {
     if (url.protocol !== "https:" || (index && new URL(index).protocol !== "https:")) throw new Error("Use HTTPS URLs for remote tracks and indexes.");
     const track = { url: url.href, name: $("track-name").value.trim() || decodeURIComponent(url.pathname.split("/").pop()), color: "#167d8d" };
     if (index) track.indexURL = index;
+    if ($("track-format").value) track.format = $("track-format").value;
     status("Loading track…");
     await browser.loadTrack(track);
     $("track-form").reset();
