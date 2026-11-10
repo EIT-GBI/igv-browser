@@ -74,10 +74,10 @@
         locus: "chr17:7,661,779-7,687,550",
         tracks: defaults.filter(remote)
       });
-      status.textContent = "Choose your ~/.igv folder to load saved local tracks.";
+      status.textContent = "Choose your ~/igv folder to load saved local tracks.";
       if (persistent) {
         try { savedFolder = await rememberedFolder(); }
-        catch { status.textContent = "Choose your ~/.igv folder. Browser storage is unavailable for remembering it."; }
+        catch { status.textContent = "Choose your ~/igv folder. Browser storage is unavailable for remembering it."; }
         if (savedFolder) {
           if (await savedFolder.queryPermission({ mode: "read" }) === "granted") {
             await loadTracks(fileFromHandle);
