@@ -6,15 +6,60 @@
   <title>IGV</title>
 </head>
 <body>
+  <label>Local tracks folder <input id="folder" type="file" webkitdirectory multiple disabled></label>
+  <span id="status" role="status">Loading IGV…</span>
   <div id="igv"></div>
   <script type="module">
     import igv from "https://cdn.jsdelivr.net/npm/igv@3.8.10/dist/igv.esm.min.js";
 
-    igv.createBrowser(document.getElementById("igv"), {
-      genome: "hg38",
-      locus: "chr17:7,661,779-7,687,550"
-    }).catch(error => {
-      document.getElementById("igv").textContent = error.message;
+    const folder = document.getElementById("folder");
+    const status = document.getElementById("status");
+    let browser, defaults;
+    const localTracks = [];
+    const remote = track => /^https?:\/\//i.test(track.url);
+
+    try {
+      const response = await fetch("tracks.json");
+      if (!response.ok) throw new Error(`Track settings failed to load (${response.status}).`);
+      defaults = await response.json();
+      browser = await igv.createBrowser(document.getElementById("igv"), {
+        genome: "hg38",
+        locus: "chr17:7,661,779-7,687,550",
+        tracks: defaults.filter(remote)
+      });
+      folder.disabled = false;
+      status.textContent = "Choose your ~/.igv folder to load saved local tracks.";
+    } catch (error) {
+      status.textContent = error.message;
+    }
+
+    folder.addEventListener("change", async () => {
+      folder.disabled = true;
+      try {
+        const files = [...folder.files];
+        if (!files.length) return;
+        // Prefer the selected folder's saved settings; fall back to the repo defaults.
+        const settings = files.find(file => file.webkitRelativePath.split("/").length === 2 && file.name === "tracks.json");
+        const tracks = settings ? JSON.parse(await settings.text()) : defaults;
+        if (!Array.isArray(tracks)) throw new Error("tracks.json must contain an array of IGV tracks.");
+        const local = tracks.filter(track => !remote(track));
+        const resolved = local.map(track => {
+          const path = String(track.url).replace(/^\.\//, "");
+          const file = files.find(file => file.webkitRelativePath.split("/").slice(1).join("/") === path);
+          if (!file) throw new Error(`Select a folder containing ${path}.`);
+          return { ...track, url: file };
+        });
+        for (const track of localTracks.splice(0)) browser.removeTrack(track);
+        for (const config of resolved) {
+          status.textContent = `Loading ${config.name}…`;
+          localTracks.push(await browser.loadTrack(config));
+        }
+        status.textContent = `Loaded ${resolved.length} local track(s). Files stay on this computer.`;
+      } catch (error) {
+        status.textContent = error.message;
+      } finally {
+        folder.disabled = false;
+      }
     });
   </script>
 </body>

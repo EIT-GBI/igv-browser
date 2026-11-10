@@ -1,0 +1,11 @@
+[
+  {
+    "name": "HAP1 RNA-seq \u00b7 c12 R1",
+    "type": "wig",
+    "format": "bigwig",
+    "url": "RNAseq_HAP1_c12_R1.bw",
+    "color": "#477b9c",
+    "height": 100,
+    "autoscale": true
+  }
+]
