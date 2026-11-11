@@ -5,7 +5,7 @@ export function signalTrackViews(browser) {
 
 export async function scaleSelectedTracks(browser, range) {
   const views = signalTrackViews(browser).filter(view => view.track.selected);
-  if (!views.length) throw new Error('Select signal tracks by clicking their names.');
+  if (!views.length) throw new Error('Select signal tracks using their checkboxes.');
   let min, max;
   if (range) {
     min = String(range.min).trim(); max = String(range.max).trim();
@@ -37,9 +37,8 @@ export function installGroupScaling(browser, controls) {
   const root = browser.root;
   const style = root.ownerDocument.createElement('style');
   style.textContent = `
-    .igv-track-label[data-scale-select] { cursor: pointer; }
-    .igv-track-label[data-scale-select]:focus-visible { outline: 2px solid #2467a0; }
-    .igv-track-label[data-scale-select][aria-pressed=true] { background: #dceafa; color: #123f68; }
+    .igv-track-label input[data-scale-select] { margin: 0 4px 0 0; vertical-align: middle; cursor: pointer; }
+    .igv-track-label:has(input[data-scale-select]:checked) { background: #dceafa; color: #123f68; }
     .igv-viewport[data-scale-selected=true] { outline: 2px solid #477b9c; outline-offset: -2px; }
   `;
   root.appendChild(style);
@@ -59,33 +58,35 @@ export function installGroupScaling(browser, controls) {
         viewport.viewportElement.dataset.scaleSelected = String(selected);
         const label = viewport.trackLabelElement;
         if (!label) continue;
-        label.dataset.scaleSelect = '';
-        label.setAttribute('role', 'button');
-        label.setAttribute('tabindex', '0');
-        label.setAttribute('aria-pressed', String(selected));
-        label.title = `${view.track.name} · click to select for group scaling`;
+        let input = label.querySelector('input[data-scale-select]');
+        if (!input) {
+          input = root.ownerDocument.createElement('input');
+          input.type = 'checkbox';
+          input.dataset.scaleSelect = '';
+          label.prepend(input);
+        }
+        input.checked = selected;
+        input.setAttribute('aria-label', `Select ${view.track.name} for group scaling`);
+        input.title = 'Select for group scaling';
       }
     }
   }
-  function labelView(event) {
-    const path = event.composedPath();
-    return signalTrackViews(browser).find(view => view.viewports.some(viewport => path.includes(viewport.trackLabelElement)));
-  }
-  function select(event) {
-    const view = labelView(event);
-    if (!view) return;
-    if (event.type === 'keydown' && ![' ', 'Enter'].includes(event.key)) return;
-    event.preventDefault(); event.stopImmediatePropagation();
-    view.track.selected = !view.track.selected;
-    sync();
+  function checkboxView(event) {
+    const input = event.composedPath().find(element => element.matches?.('input[data-scale-select]'));
+    if (!input) return;
+    return signalTrackViews(browser).find(view => view.viewports.some(viewport => viewport.trackLabelElement?.contains(input)));
   }
   root.addEventListener('click', event => {
-    select(event);
+    const view = checkboxView(event);
+    if (view) {
+      // The checkbox owns selection; the label keeps IGV's metadata click handler.
+      event.stopImmediatePropagation();
+      view.track.selected = !view.track.selected;
+    }
     // IGV's native selection toggle can also clear track selection.
     queueMicrotask(sync);
   }, true);
-  root.addEventListener('keydown', select, true);
-  root.addEventListener('mousedown', event => { if (labelView(event)) event.stopPropagation(); }, true);
+  root.addEventListener('mousedown', event => { if (checkboxView(event)) event.stopPropagation(); }, true);
   root.addEventListener('change', () => queueMicrotask(sync), true);
   for (const event of ['trackorderchanged', 'trackremoved', 'genomechange', 'columnlayoutchange', 'locuschange']) browser.on(event, sync);
   clear.addEventListener('click', () => {
