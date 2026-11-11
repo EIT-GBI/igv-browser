@@ -1,5 +1,5 @@
 #widgets [hidden] { display: none !important; }
-body { margin: 5vh 5vw; }
+body { margin: 8px 5vw; }
 #widgets { font: 13px system-ui, sans-serif; border: 0; padding: 0; margin: 0; min-width: 0; }
 #widgets details { border: 1px solid #ddd; margin: 5px 0; padding: 7px; }
 #widgets summary { cursor: pointer; font-weight: 600; }
@@ -24,3 +24,13 @@ body { margin: 5vh 5vw; }
 .igv-circview-button { cursor: pointer; padding: 4px; border: 1px solid #ccc; }
 
 #scale-section input { width: 75px; }
+
+#widgets #scale-section {
+  position: fixed; right: 5vw; bottom: 5vh; z-index: 10000;
+  box-sizing: border-box; width: 310px; max-width: 90vw;
+  margin: 0; padding: 12px; border: 1px solid #bbb; border-radius: 5px;
+  background: white; box-shadow: 0 3px 16px #0003;
+}
+#scale-section strong { flex: 1; }
+#scale-close { border: 0; background: transparent; cursor: pointer; }
+#scale-count { flex-basis: 100%; }

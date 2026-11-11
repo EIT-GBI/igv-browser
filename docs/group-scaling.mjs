@@ -33,7 +33,8 @@ export async function scaleSelectedTracks(browser, range) {
 }
 
 export function installGroupScaling(browser, controls) {
-  const {row, count, auto, apply, clear, min, max} = controls;
+  const {row, count, auto, apply, clear, close, min, max} = controls;
+  let panelOpen = false;
   const root = browser.root;
   const style = root.ownerDocument.createElement('style');
   style.textContent = `
@@ -46,7 +47,8 @@ export function installGroupScaling(browser, controls) {
   function sync() {
     const views = signalTrackViews(browser);
     const chosen = views.filter(view => view.track.selected);
-    row.hidden = views.length === 0;
+    if (chosen.length === 0) panelOpen = false;
+    row.hidden = !panelOpen;
     count.textContent = `${chosen.length} selected`;
     auto.disabled = apply.disabled = clear.disabled = chosen.length === 0;
     for (const view of views) {
@@ -67,7 +69,7 @@ export function installGroupScaling(browser, controls) {
         }
         input.checked = selected;
         input.setAttribute('aria-label', `Select ${view.track.name} for group scaling`);
-        input.title = 'Select for group scaling';
+        input.title = 'Select for group scaling · press S for controls';
       }
     }
   }
@@ -93,6 +95,21 @@ export function installGroupScaling(browser, controls) {
     for (const view of signalTrackViews(browser)) view.track.selected = false;
     sync();
   });
+  root.ownerDocument.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && panelOpen) {
+      panelOpen = false;
+      sync();
+      return;
+    }
+    const typing = event.composedPath().some(element => element.isContentEditable || element.matches?.('textarea, select, input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit])'));
+    if (typing || event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
+    if (event.key.toLowerCase() === 's' && signalTrackViews(browser).some(view => view.track.selected)) {
+      event.preventDefault();
+      panelOpen = !panelOpen;
+      sync();
+    }
+  }, true);
+  close.addEventListener('click', () => { panelOpen = false; sync(); });
   sync();
   // Read fields when the action is invoked, preserving edits while selecting tracks.
   return {sync, range: () => ({min:min.value, max:max.value})};

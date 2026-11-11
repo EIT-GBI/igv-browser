@@ -180,7 +180,7 @@ async function start() {
   browser = await igv.createBrowser($('igv'), {genome:'hg38',locus:'chr17:7,661,779-7,687,550',genomes,queryParametersSupported:true,showSVGButton:false,tracks:defaults.filter(track => /^https?:/.test(track.url))});
   installWheelZoom($('igv'), browser, error => message(error.message || String(error)));
   installAnnotationSeamFix(browser);
-  scaling = installGroupScaling(browser, {row:$('scale-section'), count:$('scale-count'), auto:$('scale-auto'), apply:$('scale-apply'), clear:$('scale-clear'), min:$('scale-min'), max:$('scale-max')});
+  scaling = installGroupScaling(browser, {row:$('scale-section'), count:$('scale-count'), auto:$('scale-auto'), apply:$('scale-apply'), clear:$('scale-clear'), close:$('scale-close'), min:$('scale-min'), max:$('scale-max')});
   const resources = await Promise.allSettled([json(upstream+'resources/tracks/trackRegistry.json'),json('sessions.json')]);
   if (resources[0].status === 'fulfilled') registry = resources[0].value;
   else message('Track registry is unavailable. ENCODE and track URL loading remain available.');

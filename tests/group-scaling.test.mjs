@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {scaleSelectedTracks, signalTrackViews} from '../docs/group-scaling.mjs';
+import {scaleSelectedTracks, signalTrackViews, installGroupScaling} from '../docs/group-scaling.mjs';
 
 function fixture() {
   const tracks = ['wig','wig','wig','annotation'].map((type,i) => ({type,selected:i !== 2,config:{autoscale:true},autoscale:true,dataRange:{min:0,max:i+1},setDataRange(range){this.dataRange=range;this.autoscale=false;this.autoscaleGroup=undefined;}}));
@@ -43,4 +43,28 @@ test('empty, removed and annotation-only selections are rejected',async()=>{
   const f=fixture();f.tracks[0].disposed=true;f.tracks[1].selected=false;
   assert.equal(signalTrackViews(f.browser).length,2);
   await assert.rejects(scaleSelectedTracks(f.browser),/Select signal tracks/);assert.equal(f.updates(),0);
+});
+
+test('floating controls require selection and an explicit S shortcut',()=>{
+  const listeners = new Map();
+  const control = () => ({addEventListener(name,handler){this[name]=handler;}});
+  const doc = {createElement:()=>({}),addEventListener(name,handler){listeners.set(name,handler);}};
+  const track = {type:'wig',selected:false};
+  const browser = {root:{ownerDocument:doc,appendChild(){},addEventListener(){}},trackViews:[{track,viewports:[],setDragHandleSelectionState(){}}],on(){}};
+  const controls = Object.fromEntries(['row','count','auto','apply','clear','close','min','max'].map(name=>[name,control()]));
+  const panel = installGroupScaling(browser,controls);
+  const key = (key,extra={}) => listeners.get('keydown')({key,composedPath:()=>[],preventDefault(){},...extra});
+  assert.equal(controls.row.hidden,true);
+  key('s'); assert.equal(controls.row.hidden,true);
+  track.selected=true;panel.sync();assert.equal(controls.row.hidden,true);
+  for(const extra of [{ctrlKey:true},{metaKey:true},{altKey:true},{repeat:true},{composedPath:()=>[{matches:()=>true}]}]){
+    key('s',extra);assert.equal(controls.row.hidden,true);
+  }
+  key('s');assert.equal(controls.row.hidden,false);
+  key('s');assert.equal(controls.row.hidden,true);
+  key('S');assert.equal(controls.row.hidden,false);
+  controls.close.click();assert.equal(controls.row.hidden,true);assert.equal(track.selected,true);
+  key('s');key('Escape',{composedPath:()=>[{matches:()=>true}]});assert.equal(controls.row.hidden,true);
+  key('s');track.selected=false;panel.sync();assert.equal(controls.row.hidden,true);
+  track.selected=true;panel.sync();assert.equal(controls.row.hidden,true);
 });
