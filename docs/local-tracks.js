@@ -51,7 +51,7 @@ export async function initializeLocalTracks(browser, defaults, restore = true) {
         status.textContent = `Loading ${config.name}…`;
         localTracks.push(await browser.loadTrack(config));
       }
-      status.textContent = `Loaded ${resolved.length} local track(s). Files stay on this computer.`;
+      status.textContent = `Loaded ${resolved.length} local track(s).`;
       choose.textContent = "Change local tracks folder";
     }
 

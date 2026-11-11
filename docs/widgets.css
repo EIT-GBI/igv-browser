@@ -1,7 +1,9 @@
 #widgets [hidden] { display: none !important; }
 body { margin: 8px; }
 #widgets { font: 13px system-ui, sans-serif; border: 1px solid #ccc; padding: 8px; }
-#widgets fieldset { border: 1px solid #ddd; margin-top: 8px; }
+#widgets details { border: 1px solid #ddd; margin: 5px 0; padding: 7px; }
+#widgets summary { cursor: pointer; font-weight: 600; }
+#widgets details[open] > summary { margin-bottom: 7px; }
 #widgets .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 5px 0; }
 #widgets label { display: inline-flex; align-items: center; gap: 5px; }
 #widgets input, #widgets select, #widgets button, #widgets textarea { font: inherit; }

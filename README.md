@@ -6,6 +6,8 @@ A standalone [igv.js](https://igv.org/doc/igvjs/) browser with direct widgets fo
 
 ## Widgets
 
+Each feature has a foldable section. Genome starts expanded.
+
 - **Genome:** the official IGV genome list, with human builds first and chicken included.
 - **Tracks:** local files, URLs with optional indexes, the four ENCODE categories, the current genome's annotation hub, and all collections in IGV-Web's genome-specific track registry. Source buttons open a searchable, paged multi-select list. The list loads data on demand.
 - **Session:** load JSON/XML files, hosted session URLs, lab starter sessions, or the ten most recently loaded sessions stored in this browser. Save the current state as JSON.
