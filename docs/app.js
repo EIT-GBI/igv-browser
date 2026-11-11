@@ -1,6 +1,6 @@
 import igv from 'https://cdn.jsdelivr.net/npm/igv@3.8.10/dist/igv.esm.min.js';
 import {initializeLocalTracks} from './local-tracks.js';
-import {installGroupScaling, scaleSelectedTracks} from './group-scaling.mjs?v=fe8d95d';
+import {installGroupScaling, scaleSelectedTracks} from './group-scaling.mjs?v=label-anchor-1';
 import {installAnnotationSeamFix} from './annotation-seams.mjs';
 import {installWheelZoom} from './wheel-zoom.mjs';
 import {imageBasename, dnaSequence, parseTable, canonicalGenome, encodeTrack, flattenGroups, localFileConfigs} from './widget-utils.mjs';

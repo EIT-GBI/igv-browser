@@ -26,7 +26,7 @@ body { margin: 8px 5vw; }
 #scale-section input { width: 75px; }
 
 #widgets #scale-section {
-  position: fixed; right: 5vw; bottom: 5vh; z-index: 10000;
+  position: fixed; left: 5vw; top: 0; z-index: 10000;
   box-sizing: border-box; width: 310px; max-width: 90vw;
   margin: 0; padding: 12px; border: 1px solid #bbb; border-radius: 5px;
   background: white; box-shadow: 0 3px 16px #0003;

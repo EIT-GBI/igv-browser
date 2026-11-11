@@ -32,9 +32,16 @@ export async function scaleSelectedTracks(browser, range) {
   return views.length;
 }
 
+export function scalingPanelPosition(label, panel, viewport) {
+  return {
+    left: Math.max(8, Math.min(label.right + 8, viewport.width - panel.width - 8)),
+    top: Math.max(8, Math.min(label.top, viewport.height - panel.height - 8))
+  };
+}
+
 export function installGroupScaling(browser, controls) {
   const {row, count, auto, apply, clear, close, min, max} = controls;
-  let panelOpen = false;
+  let panelOpen = false, anchorView;
   const root = browser.root;
   const style = root.ownerDocument.createElement('style');
   style.textContent = `
@@ -43,6 +50,18 @@ export function installGroupScaling(browser, controls) {
     .igv-viewport[data-scale-selected=true] { outline: 2px solid #477b9c; outline-offset: -2px; }
   `;
   root.appendChild(style);
+
+  function position() {
+    if (row.hidden) return;
+    const chosen = signalTrackViews(browser).filter(view => view.track.selected);
+    const anchor = chosen.includes(anchorView) ? anchorView : chosen[0];
+    const label = anchor?.viewports.map(viewport => viewport.trackLabelElement).find(element => element?.getBoundingClientRect().width > 0);
+    if (!label) return;
+    const window = root.ownerDocument.defaultView;
+    const point = scalingPanelPosition(label.getBoundingClientRect(), row.getBoundingClientRect(), {width:window.innerWidth, height:window.innerHeight});
+    row.style.left = `${point.left}px`;
+    row.style.top = `${point.top}px`;
+  }
 
   function sync() {
     const views = signalTrackViews(browser);
@@ -72,6 +91,7 @@ export function installGroupScaling(browser, controls) {
         input.title = 'Select for group scaling · press S for controls';
       }
     }
+    position();
   }
   function checkboxView(event) {
     const input = event.composedPath().find(element => element.matches?.('input[data-scale-select]'));
@@ -84,12 +104,16 @@ export function installGroupScaling(browser, controls) {
       // The checkbox owns selection; the label keeps IGV's metadata click handler.
       event.stopImmediatePropagation();
       view.track.selected = !view.track.selected;
+      if (view.track.selected) anchorView = view;
     }
     // IGV's native selection toggle can also clear track selection.
     queueMicrotask(sync);
   }, true);
   root.addEventListener('mousedown', event => { if (checkboxView(event)) event.stopPropagation(); }, true);
   root.addEventListener('change', () => queueMicrotask(sync), true);
+  root.addEventListener('scroll', position, true);
+  root.ownerDocument.addEventListener('scroll', position, true);
+  root.ownerDocument.defaultView?.addEventListener('resize', position);
   for (const event of ['trackorderchanged', 'trackremoved', 'genomechange', 'columnlayoutchange', 'locuschange']) browser.on(event, sync);
   clear.addEventListener('click', () => {
     for (const view of signalTrackViews(browser)) view.track.selected = false;

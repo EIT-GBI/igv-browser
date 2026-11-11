@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {scaleSelectedTracks, signalTrackViews, installGroupScaling} from '../docs/group-scaling.mjs';
+import {scaleSelectedTracks, signalTrackViews, installGroupScaling, scalingPanelPosition} from '../docs/group-scaling.mjs';
 
 function fixture() {
   const tracks = ['wig','wig','wig','annotation'].map((type,i) => ({type,selected:i !== 2,config:{autoscale:true},autoscale:true,dataRange:{min:0,max:i+1},setDataRange(range){this.dataRange=range;this.autoscale=false;this.autoscaleGroup=undefined;}}));
@@ -67,4 +67,11 @@ test('floating controls require selection and an explicit S shortcut',()=>{
   key('s');key('Escape',{composedPath:()=>[{matches:()=>true}]});assert.equal(controls.row.hidden,true);
   key('s');track.selected=false;panel.sync();assert.equal(controls.row.hidden,true);
   track.selected=true;panel.sync();assert.equal(controls.row.hidden,true);
+});
+
+
+test('floating panel sits beside its label and stays within the viewport',()=>{
+  assert.deepEqual(scalingPanelPosition({right:180,top:300},{width:310,height:150},{width:1000,height:800}),{left:188,top:300});
+  assert.deepEqual(scalingPanelPosition({right:900,top:760},{width:310,height:150},{width:1000,height:800}),{left:682,top:642});
+  assert.deepEqual(scalingPanelPosition({right:100,top:-10},{width:310,height:150},{width:350,height:800}),{left:32,top:8});
 });
