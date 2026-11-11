@@ -1,6 +1,6 @@
 # IGV Browser
 
-A standalone [igv.js](https://igv.org/doc/igvjs/) browser with direct widgets for the requested IGV-Web functions.
+A customised IGV browser for Parts lab, built with [igv.js](https://igv.org/doc/igvjs/).
 
 [Open the browser](https://eit-gbi.github.io/igv-browser/).
 
