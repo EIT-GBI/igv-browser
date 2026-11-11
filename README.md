@@ -10,6 +10,7 @@ Genome, Tracks, Session, BLAT, and Circular View start folded. Save image is alw
 
 - **Genome:** the official IGV genome list, with human builds first and chicken included.
 - **Tracks:** local files, URLs with optional indexes, the four ENCODE categories, the current genome's annotation hub, and all collections in IGV-Web's genome-specific track registry. Source buttons open a searchable, paged multi-select list. The list loads data on demand.
+- **Group scaling:** click signal-track names to select multiple bigWig, wig, or bedGraph tracks. **Group autoscale** shares the visible data range and updates on pan/zoom. **Apply group range** assigns the same minimum and maximum to the selected tracks. Selected tracks have blue outlines. **Clear selection** clears the selection while preserving scaling. Scaling is included in saved session JSON.
 - **Session:** load JSON/XML files, hosted session URLs, lab starter sessions, or the ten most recently loaded sessions stored in this browser. Save the current state as JSON.
 - **Save PNG / SVG:** defaults to `IGV-screenshot_<assembly>_<chromosome>_<start>-<end>`. The name updates with the view and can be edited.
 - **BLAT:** submit a DNA sequence of 20–8000 bases to IGV's UCSC BLAT service and display its native results track and table.
@@ -43,6 +44,8 @@ Edit `docs/app.js` for the initial genome and locus. Edit `docs/tracks.json` for
 
 igv.js is pinned to 3.8.10 and loaded from jsDelivr. Site code and igv.js are MIT licensed.
 
+Inline annotation tracks use the same compact interval renderer as the Parts apps to remove false one-pixel seam lines.
+
 ## Validation
 
-Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, and wheel zoom. Serve `docs/` with a static HTTP server for browser testing.
+Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs tests/group-scaling.test.mjs tests/annotation-seams.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, wheel zoom, shared scaling, and annotation rendering. Serve `docs/` with a static HTTP server for browser testing.

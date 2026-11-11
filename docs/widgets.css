@@ -22,3 +22,5 @@ body { margin: 8px; }
 .igv-circview-toolbar { display: flex; gap: 8px; font: 12px system-ui, sans-serif; }
 .igv-circview-toolbar-button-container { display: flex; gap: 8px; }
 .igv-circview-button { cursor: pointer; padding: 4px; border: 1px solid #ccc; }
+
+#scale-section input { width: 75px; }

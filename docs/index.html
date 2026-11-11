@@ -62,6 +62,13 @@
       </div>
       <div id="circular"></div>
     </details>
+    <div id="scale-section" class="row" role="group" aria-label="Group scaling" hidden>
+      <span>Click signal-track names to select.</span><span id="scale-count" aria-live="polite">0 selected</span>
+      <button id="scale-auto" disabled>Group autoscale</button>
+      <label>Min <input id="scale-min" type="number" step="any" value="0" aria-label="Group minimum"></label>
+      <label>Max <input id="scale-max" type="number" step="any" value="100" aria-label="Group maximum"></label>
+      <button id="scale-apply" disabled>Apply group range</button><button id="scale-clear" disabled>Clear selection</button>
+    </div>
   </fieldset>
   <p id="status" role="status">Loading IGV…</p>
   <div id="igv"></div>

@@ -1,11 +1,14 @@
 import igv from 'https://cdn.jsdelivr.net/npm/igv@3.8.10/dist/igv.esm.min.js';
 import {initializeLocalTracks} from './local-tracks.js';
+import {installGroupScaling, scaleSelectedTracks} from './group-scaling.mjs';
+import {installAnnotationSeamFix} from './annotation-seams.mjs';
 import {installWheelZoom} from './wheel-zoom.mjs';
 import {imageBasename, dnaSequence, parseTable, canonicalGenome, encodeTrack, flattenGroups, localFileConfigs} from './widget-utils.mjs';
 
 const $ = id => document.getElementById(id);
 const upstream = 'https://raw.githubusercontent.com/igvteam/igv-webapp/master/';
 const genomeRegistryURL = 'https://raw.githubusercontent.com/igvteam/igv-data/refs/heads/main/genomes/web/genomes.json';
+let scaling;
 let browser, genomes = [], registry = {}, sessionRegistry = [], catalogue = [], filtered = [], page = 0;
 let catalogueRevision = 0, selected = new Set(), imageNameEdited = false;
 const cache = new Map();
@@ -176,6 +179,8 @@ async function start() {
   $('genome').replaceChildren(...genomes.map(genome => option(genome.id,genome.name.trim())));
   browser = await igv.createBrowser($('igv'), {genome:'hg38',locus:'chr17:7,661,779-7,687,550',genomes,queryParametersSupported:true,showSVGButton:false,tracks:defaults.filter(track => /^https?:/.test(track.url))});
   installWheelZoom($('igv'), browser, error => message(error.message || String(error)));
+  installAnnotationSeamFix(browser);
+  scaling = installGroupScaling(browser, {row:$('scale-section'), count:$('scale-count'), auto:$('scale-auto'), apply:$('scale-apply'), clear:$('scale-clear'), min:$('scale-min'), max:$('scale-max')});
   const resources = await Promise.allSettled([json(upstream+'resources/tracks/trackRegistry.json'),json('sessions.json')]);
   if (resources[0].status === 'fulfilled') registry = resources[0].value;
   else message('Track registry is unavailable. ENCODE and track URL loading remain available.');
@@ -207,4 +212,6 @@ $('track-results').addEventListener('change',()=>{for(const item of $('track-res
 $('previous-tracks').addEventListener('click',()=>{page--;renderTracks();});
 $('next-tracks').addEventListener('click',()=>{page++;renderTracks();});
 action('load-selected-tracks',async()=>{const configs=[...selected].map(index=>catalogue[index].config);if(!configs.length)throw new Error('Select at least one track.');message(`Loading ${configs.length} track(s)…`);const tracks=await browser.loadTrackList(configs); message(`Loaded ${tracks.filter(Boolean).length} of ${configs.length} selected track(s).`);});
+action('scale-auto', async () => { const count=await scaleSelectedTracks(browser); scaling.sync(); message(`Group autoscale applied to ${count} signal track(s). The shared range updates with the view.`); });
+action('scale-apply', async () => { const range=scaling.range(), count=await scaleSelectedTracks(browser,range); scaling.sync(); message(`Shared range ${range.min} to ${range.max} applied to ${count} signal track(s).`); });
 run(start);
