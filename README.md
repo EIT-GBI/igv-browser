@@ -18,6 +18,10 @@ Genome, Tracks, Session, BLAT, and Circular View start folded. Save image is alw
 
 Genomes and track catalogues come from the same official registries used by [IGV-Web](https://igv.org/app/), through their IGV-team GitHub mirrors. Catalogue availability and BLAT results depend on their upstream services. The site uses the existing igv.js 3.8.10 API for genome loading, sessions, images, BLAT, and circular-view integration. Circular View loads the same React 16.14 and JBrowse 1.6.9 dependencies as IGV-Web when first opened.
 
+## HAP-1 ENCODE-rE2G highlighting
+
+For the HAP-1_ENCSR895KTN ENCODE-rE2G Elements and E2G Predictions tracks, click an element to highlight it in red together with its prediction links. Other elements and links fade to very light grey. Matching uses the exact element coordinates in the first BEDPE anchor. Click the selected element again, or an empty part of the Elements track, to restore all colours. Feature details and track-label metadata remain available.
+
 ## Lab sessions
 
 `docs/sessions.json` is the starter-session registry. It currently points to `docs/sessions/parts-hg38.json`, a human hg38 starting view at TP53. Add a record with `label` and `url` to offer another lab or hosted personal session. Individual session URLs can also be loaded directly from the widget.
@@ -48,4 +52,4 @@ Inline annotation tracks use the same compact interval renderer as the Parts app
 
 ## Validation
 
-Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs tests/group-scaling.test.mjs tests/annotation-seams.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, wheel zoom, shared scaling, and annotation rendering. Serve `docs/` with a static HTTP server for browser testing.
+Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs tests/group-scaling.test.mjs tests/annotation-seams.test.mjs tests/e2g-highlighting.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, wheel zoom, shared scaling, and annotation rendering. Serve `docs/` with a static HTTP server for browser testing.
