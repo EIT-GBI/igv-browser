@@ -6,7 +6,7 @@ A standalone [igv.js](https://igv.org/doc/igvjs/) browser with direct widgets fo
 
 ## Widgets
 
-Genome, Tracks, Session, BLAT, and Circular View start folded. Save image is always visible in one row.
+Genome, Tracks, Session, BLAT, and Circular View start folded. Save image is always visible in one row. Scroll up over a genome track to zoom in, and scroll down to zoom out. Zoom follows the mouse pointer.
 
 - **Genome:** the official IGV genome list, with human builds first and chicken included.
 - **Tracks:** local files, URLs with optional indexes, the four ENCODE categories, the current genome's annotation hub, and all collections in IGV-Web's genome-specific track registry. Source buttons open a searchable, paged multi-select list. The list loads data on demand.
@@ -45,4 +45,4 @@ igv.js is pinned to 3.8.10 and loaded from jsDelivr. Site code and igv.js are MI
 
 ## Validation
 
-Run `node --test tests/widgets.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, and file/index pairing. Serve `docs/` with a static HTTP server for browser testing.
+Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, and wheel zoom. Serve `docs/` with a static HTTP server for browser testing.

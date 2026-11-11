@@ -1,5 +1,6 @@
 import igv from 'https://cdn.jsdelivr.net/npm/igv@3.8.10/dist/igv.esm.min.js';
 import {initializeLocalTracks} from './local-tracks.js';
+import {installWheelZoom} from './wheel-zoom.mjs';
 import {imageBasename, dnaSequence, parseTable, canonicalGenome, encodeTrack, flattenGroups, localFileConfigs} from './widget-utils.mjs';
 
 const $ = id => document.getElementById(id);
@@ -174,6 +175,7 @@ async function start() {
   genomes.sort((a,b) => { const ai=priority.indexOf(a.id),bi=priority.indexOf(b.id); return (ai<0?100:ai)-(bi<0?100:bi) || a.name.localeCompare(b.name); });
   $('genome').replaceChildren(...genomes.map(genome => option(genome.id,genome.name.trim())));
   browser = await igv.createBrowser($('igv'), {genome:'hg38',locus:'chr17:7,661,779-7,687,550',genomes,queryParametersSupported:true,showSVGButton:false,tracks:defaults.filter(track => /^https?:/.test(track.url))});
+  installWheelZoom($('igv'), browser, error => message(error.message || String(error)));
   const resources = await Promise.allSettled([json(upstream+'resources/tracks/trackRegistry.json'),json('sessions.json')]);
   if (resources[0].status === 'fulfilled') registry = resources[0].value;
   else message('Track registry is unavailable. ENCODE and track URL loading remain available.');
