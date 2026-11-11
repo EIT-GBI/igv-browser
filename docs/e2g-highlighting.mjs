@@ -34,6 +34,7 @@ export function installE2GHighlighting(browser) {
   function sync() {
     for (const view of views()) {
       const {track} = view;
+      let needsRepaint = false;
       if (patched.has(track)) continue;
       patched.add(track);
       if (e2gTrackRole(track) === 'elements') {
@@ -43,6 +44,10 @@ export function installE2GHighlighting(browser) {
           return sameElement(feature, selected, chromosome) ? highlightedColor : fadedColor;
         };
       } else {
+        if (!track.config.arcType) {
+          track.arcType = track.config.arcType = 'partialInView';
+          needsRepaint = true;
+        }
         const color = track.getColor, draw = track.draw;
         track.getColor = function(feature, ...args) {
           return !selected || predictionMatchesElement(feature, selected, chromosome)
@@ -58,7 +63,7 @@ export function installE2GHighlighting(browser) {
           return draw.call(this, {...options, features:[...faint, ...highlighted]});
         };
       }
-      if (selected) view.repaintViews();
+      if (selected || needsRepaint) view.repaintViews();
     }
   }
 

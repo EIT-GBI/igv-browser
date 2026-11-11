@@ -20,7 +20,7 @@ Genomes and track catalogues come from the same official registries used by [IGV
 
 ## HAP-1 ENCODE-rE2G highlighting
 
-For the HAP-1_ENCSR895KTN ENCODE-rE2G Elements and E2G Predictions tracks, click an element to highlight it in red together with its prediction links. Other elements and links fade to very light grey. Matching uses the exact element coordinates in the first BEDPE anchor. Click the selected element again, or an empty part of the Elements track, to restore all colours. Feature details and track-label metadata remain available.
+For the HAP-1_ENCSR895KTN ENCODE-rE2G Elements and E2G Predictions tracks, click an element to highlight it in red together with its prediction links. Other elements and links fade to very light grey. The prediction track defaults to **Proportional – One End in View**; an arc type saved explicitly in a session is retained. Matching uses the exact element coordinates in the first BEDPE anchor. Click the selected element again, or an empty part of the Elements track, to restore all colours. Feature details and track-label metadata remain available.
 
 ## Lab sessions
 

@@ -18,6 +18,7 @@ function fixture() {
   const browser={trackViews:[elements,predictions,unrelated],genome:{getChromosomeName:chr=>String(chr).replace(/^chr/,'')},on(event,handler){events.set(event,handler);}};
   const emit=(event,...args)=>events.get(event)(...args);
   installE2GHighlighting(browser);
+  repaints.length = 0;
   const click=(features=[element],track=elements.track)=>emit('trackclick',track,[],778700,features);
   return {browser,elements,predictions,unrelated,draws,repaints,emit,click,view};
 }
@@ -58,4 +59,11 @@ test('selection matches fresh feature objects after panning and applies to track
 test('removing the selected element track or switching genomes clears transient highlighting',()=>{
   const f=fixture();f.click();f.browser.trackViews.splice(0,1);f.emit('trackremoved',f.elements.track);assert.equal(f.predictions.track.getColor(otherLink),'red');
   f.browser.trackViews.unshift(f.elements);f.click();f.emit('genomechange');assert.equal(f.elements.track.getColorForFeature(otherElement),'darkgrey');
+});
+
+test('prediction defaults use one end in view and preserve an explicitly saved arc type',()=>{
+  const f=fixture();assert.equal(f.predictions.track.arcType,'partialInView');assert.equal(f.predictions.track.config.arcType,'partialInView');
+  const saved=f.view('predictions');saved.track.config.arcType='nested';saved.track.arcType='nested';
+  f.browser.trackViews.push(saved);f.emit('trackorderchanged');assert.equal(saved.track.arcType,'nested');
+  f.predictions.track.arcType='inView';f.emit('trackorderchanged');assert.equal(f.predictions.track.arcType,'inView');
 });
