@@ -42,23 +42,10 @@
         <button id="save-session">Save session JSON</button>
       </div>
     </details>
-    <details id="share-section">
-      <summary>Share</summary>
-      <div class="row">
-        <button id="share">Share</button><input id="share-url" type="text" readonly aria-label="Share link" placeholder="Share link">
-      </div>
-    </details>
-    <details id="bookmark-section">
-      <summary>Bookmark</summary>
-      <div class="row"><button id="bookmark">Bookmark</button></div>
-    </details>
-    <details id="image-section">
-      <summary>Save image</summary>
-      <div class="row">
-        <label>Image name <input id="image-name" type="text"></label>
-        <button id="save-png">Save PNG</button><button id="save-svg">Save SVG</button>
-      </div>
-    </details>
+    <div id="image-section" class="row" role="group" aria-label="Save image">
+      <label>Save image <input id="image-name" type="text" aria-label="Image name"></label>
+      <button id="save-png">Save PNG</button><button id="save-svg">Save SVG</button>
+    </div>
     <details id="blat-section">
       <summary>Tools · BLAT</summary>
       <div class="row">

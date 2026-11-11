@@ -69,7 +69,6 @@ async function savePNG() {
     download(imageFilename('png'),blob); message('PNG image saved.');
   } finally { URL.revokeObjectURL(source); }
 }
-function viewURL() { return browser.sessionURL(); }
 
 async function loadSession(record) {
   message('Loading session…');
@@ -192,8 +191,6 @@ action('load-saved', () => loadSession(sessionRegistry[Number($('session-list').
 action('load-session-url', async () => { const url = new URL($('session-url').value.trim()); if (!['https:','http:'].includes(url.protocol)) throw new Error('Enter an HTTP(S) session URL.'); await loadSession({label:url.pathname.split('/').at(-1) || url.hostname,url:url.href}); });
 action('session-file', async () => { const file=$('session-file').files[0]; if (!file) return; if (file.name.toLowerCase().endsWith('.json')) await loadSession({label:file.name,config:JSON.parse(await file.text())}); else { await browser.loadSession({url:file}); rememberSession({label:file.name,config:browser.toJSON()}); syncGenome(); message(`Session loaded · ${file.name}.`); } $('session-file').value=''; }, 'change');
 action('save-session', () => { download(`IGV-session_${browser.genome.id}.json`,JSON.stringify(browser.toJSON(),null,2)); message('Session JSON saved.'); });
-action('share', async () => { const url=viewURL(); $('share-url').value=url; try { await navigator.clipboard.writeText(url); message('Session link copied.'); } catch { message('Copy the session link from the Share link field.'); } });
-action('bookmark', () => { const url=viewURL(); history.replaceState({},'',url); $('share-url').value=url; message(`Bookmark URL ready. Press ${/Mac/.test(navigator.platform)?'⌘D':'Ctrl+D'} to save it in your browser.`); });
 $('image-name').addEventListener('input', () => {imageNameEdited=true;});
 action('save-png', savePNG);
 action('save-svg', () => {browser.saveSVGtoFile(imageFilename('svg')); message('SVG image saved.');});

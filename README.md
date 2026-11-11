@@ -6,12 +6,11 @@ A standalone [igv.js](https://igv.org/doc/igvjs/) browser with direct widgets fo
 
 ## Widgets
 
-Each feature has a foldable section. All sections start folded.
+Genome, Tracks, Session, BLAT, and Circular View start folded. Save image is always visible in one row.
 
 - **Genome:** the official IGV genome list, with human builds first and chicken included.
 - **Tracks:** local files, URLs with optional indexes, the four ENCODE categories, the current genome's annotation hub, and all collections in IGV-Web's genome-specific track registry. Source buttons open a searchable, paged multi-select list. The list loads data on demand.
 - **Session:** load JSON/XML files, hosted session URLs, lab starter sessions, or the ten most recently loaded sessions stored in this browser. Save the current state as JSON.
-- **Share:** copy a link containing the current session. **Bookmark:** put that session link into the address bar, then use Command+D or Ctrl+D to save a browser bookmark.
 - **Save PNG / SVG:** defaults to `IGV-screenshot_<assembly>_<chromosome>_<start>-<end>`. The name updates with the view and can be edited.
 - **BLAT:** submit a DNA sequence of 20–8000 bases to IGV's UCSC BLAT service and display its native results track and table.
 - **Circular View:** show/hide IGV's JBrowse circular view, set its size, and clear chords. Native track actions send supported VCF, BAM/CRAM and interaction data to it.
@@ -22,7 +21,7 @@ Genomes and track catalogues come from the same official registries used by [IGV
 
 `docs/sessions.json` is the starter-session registry. It currently points to `docs/sessions/parts-hg38.json`, a human hg38 starting view at TP53. Add a record with `label` and `url` to offer another lab or hosted personal session. Individual session URLs can also be loaded directly from the widget.
 
-Saved sessions and share links contain data references. Remote tracks require accessible data URLs; local tracks require the recipient's files and folder access. IGV presents its own warning when saving local-file references. Reopen the local tracks folder to restore those tracks. A session link takes precedence over automatic local-folder loading at startup.
+Saved sessions contain data references. Remote tracks require accessible data URLs; local tracks require the recipient's files and folder access. IGV presents its own warning when saving local-file references. Reopen the local tracks folder to restore those tracks. A session link takes precedence over automatic local-folder loading at startup.
 
 ## Saved local tracks
 

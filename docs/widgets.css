@@ -8,8 +8,10 @@ body { margin: 8px; }
 #widgets label { display: inline-flex; align-items: center; gap: 5px; }
 #widgets input, #widgets select, #widgets button, #widgets textarea { font: inherit; }
 #widgets input[type=url] { width: 185px; }
-#share-url { width: 220px; }
-#image-name { width: 280px; }
+#widgets #image-section { flex-wrap: nowrap; }
+#image-section label { min-width: 0; }
+#image-section button { flex-shrink: 0; }
+#image-name { width: 280px; min-width: 0; }
 #genome { max-width: 280px; }
 #session-list { max-width: 240px; }
 #circular-size { width: 65px; }
