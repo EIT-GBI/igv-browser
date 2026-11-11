@@ -75,7 +75,7 @@ export function installE2GHighlighting(browser) {
       : feature && {chr:feature.chr, start:feature.start, end:feature.end};
     sourceTrack = selected ? track : undefined;
     repaint();
-    // Preserve IGV's feature details popup.
+    return false; // Element clicks control highlighting without opening IGV's feature popup.
   });
   browser.on('trackorderchanged', sync);
   browser.on('trackremoved', track => {

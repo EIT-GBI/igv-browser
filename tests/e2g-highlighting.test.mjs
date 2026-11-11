@@ -33,9 +33,11 @@ test('links match the exact enhancer anchor and chromosome, including IGV featur
   for(const candidate of [{...element,chr:'chr2'},{...element,start:778480},{chr:'chr1',start:827522,end:827523}])assert.equal(predictionMatchesElement(link,candidate),false);
   assert.equal(sameElement({},{}),false);assert.equal(sameElement(undefined,element),false);
 });
-test('element click highlights its links, keeps details and preserves unrelated tracks',()=>{
+test('element click highlights its links, suppresses its popup and preserves unrelated tracks',()=>{
   const f=fixture(), config=structuredClone(f.elements.track.config);
-  assert.equal(f.click(),undefined);
+  assert.equal(f.click(),false);
+  assert.equal(f.click([element],f.predictions.track),undefined);
+  assert.equal(f.click([element],f.unrelated.track),undefined);
   assert.equal(f.elements.track.getColorForFeature(element),highlightedColor);
   assert.equal(f.elements.track.getColorForFeature(otherElement),fadedColor);
   assert.equal(f.predictions.track.getColor(link),'red');assert.equal(f.predictions.track.getColor(otherLink),fadedColor);
