@@ -214,6 +214,6 @@ $('track-results').addEventListener('change',()=>{for(const item of $('track-res
 $('previous-tracks').addEventListener('click',()=>{page--;renderTracks();});
 $('next-tracks').addEventListener('click',()=>{page++;renderTracks();});
 action('load-selected-tracks',async()=>{const configs=[...selected].map(index=>catalogue[index].config);if(!configs.length)throw new Error('Select at least one track.');message(`Loading ${configs.length} track(s)…`);const tracks=await browser.loadTrackList(configs); message(`Loaded ${tracks.filter(Boolean).length} of ${configs.length} selected track(s).`);});
-action('scale-auto', async () => { const count=await scaleSelectedTracks(browser); scaling.sync(); message(`Group autoscale applied to ${count} signal track(s). The shared range updates with the view.`); });
+action('scale-auto', async () => { await scaleSelectedTracks(browser); scaling.sync(); message(''); });
 action('scale-apply', async () => { const range=scaling.range(), count=await scaleSelectedTracks(browser,range); scaling.sync(); message(`Shared range ${range.min} to ${range.max} applied to ${count} signal track(s).`); });
 run(start);
