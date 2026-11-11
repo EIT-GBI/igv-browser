@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IGV</title>
-  <link rel="stylesheet" href="widgets.css?v=label-anchor-1">
+  <link rel="stylesheet" href="widgets.css?v=remove-circular-1">
 </head>
 <body>
   <fieldset id="widgets" disabled>
@@ -53,15 +53,6 @@
         <button id="blat">Run BLAT</button><small>Sends the sequence to UCSC through IGV’s BLAT service.</small>
       </div>
     </details>
-    <details id="circular-section">
-      <summary>Circular View</summary>
-      <div class="row">
-        <label><input id="circular-toggle" type="checkbox"> Circular View</label>
-        <label>Size <input id="circular-size" type="number" value="512" min="250" max="1600" step="50" aria-label="Circular View size"></label>
-        <button id="circular-clear">Clear chords</button>
-      </div>
-      <div id="circular"></div>
-    </details>
     <div id="scale-section" class="row" role="group" aria-label="Group scaling" hidden>
       <strong>Group scaling</strong><button id="scale-close" type="button" aria-label="Close group scaling">×</button>
       <span id="scale-count" aria-live="polite">0 selected</span>
@@ -73,6 +64,6 @@
   </fieldset>
   <p id="status" role="status">Loading IGV…</p>
   <div id="igv"></div>
-  <script type="module" src="app.js?v=quiet-autoscale-1"></script>
+  <script type="module" src="app.js?v=remove-circular-1"></script>
 </body>
 </html>

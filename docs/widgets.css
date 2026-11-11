@@ -14,14 +14,9 @@ body { margin: 8px 5vw; }
 #image-name { width: 280px; min-width: 0; }
 #genome { max-width: 280px; }
 #session-list { max-width: 240px; }
-#circular-size { width: 65px; }
 #track-results { width: 100%; margin: 5px 0; }
 #track-sources button[aria-pressed=true] { background: #e1eaf4; }
 #status { font: 13px system-ui, sans-serif; margin: 7px 0; overflow-wrap: anywhere; }
-#circular { max-width: 100%; overflow: auto; }
-.igv-circview-toolbar { display: flex; gap: 8px; font: 12px system-ui, sans-serif; }
-.igv-circview-toolbar-button-container { display: flex; gap: 8px; }
-.igv-circview-button { cursor: pointer; padding: 4px; border: 1px solid #ccc; }
 
 #scale-section input { width: 75px; }
 

@@ -153,23 +153,6 @@ function renderTracks() {
   $('previous-tracks').disabled = page === 0; $('next-tracks').disabled = start + pageSize >= filtered.length;
 }
 
-async function loadScript(url) {
-  if (document.querySelector(`script[src="${url}"]`)) return;
-  await new Promise((resolve,reject) => { const script = document.createElement('script'); script.src = url; script.onload = resolve; script.onerror = () => {script.remove(); reject(new Error('Circular View dependency failed to load.'));}; document.head.appendChild(script); });
-}
-async function circularView() {
-  if (!browser.circularView) {
-    message('Loading Circular View…');
-    await loadScript('https://cdn.jsdelivr.net/npm/react@16.14.0/umd/react.production.min.js');
-    await loadScript('https://cdn.jsdelivr.net/npm/react-dom@16.14.0/umd/react-dom.production.min.js');
-    await loadScript('https://cdn.jsdelivr.net/npm/@jbrowse/react-circular-genome-view@1.6.9/dist/react-circular-genome-view.umd.production.min.js');
-    browser.createCircularView($('circular'), false);
-    browser.circularView.setSize(Number($('circular-size').value));
-  }
-  browser.circularViewVisible = $('circular-toggle').checked;
-  message(browser.circularViewVisible ? 'Circular View shown. Use supported tracks’ chord actions to display interactions.' : 'Circular View hidden.');
-}
-
 async function start() {
   const defaults = await json('tracks.json');
   // Load the same official registry used by IGV, through its official GitHub mirror.
@@ -204,9 +187,6 @@ $('image-name').addEventListener('input', () => {imageNameEdited=true;});
 action('save-png', savePNG);
 action('save-svg', () => {browser.saveSVGtoFile(imageFilename('svg')); message('SVG image saved.');});
 action('blat', async () => {const sequence=dnaSequence($('blat-sequence').value); message('Running BLAT…'); const before=browser.findTracks(track=>track.type==='blat').length; await browser.blat(sequence); const after=browser.findTracks(track=>track.type==='blat').length; message(after>before?'BLAT results loaded.':'BLAT search finished. Check IGV for its result or service error.');});
-action('circular-toggle', circularView, 'change');
-action('circular-size', () => {const size=Number($('circular-size').value); if(size<250||size>1600) throw new Error('Choose a Circular View size between 250 and 1600 pixels.'); browser.circularView?.setSize(size);}, 'change');
-action('circular-clear', () => browser.circularView?.clearChords());
 action('track-files', async () => {const files=[...$('track-files').files]; if(files.length){await browser.loadTrackList(localFileConfigs(files));message('Local tracks loaded.');$('track-files').value='';}}, 'change');
 action('load-track-url', async () => {const url=new URL($('track-url').value.trim());if(!['http:','https:'].includes(url.protocol))throw new Error('Enter an HTTP(S) track URL.'); const config={url:url.href}; if($('track-index').value.trim())config.indexURL=new URL($('track-index').value.trim()).href; await browser.loadTrack(config);message('Track loaded.');});
 $('track-search').addEventListener('input',filterTracks);

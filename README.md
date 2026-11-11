@@ -6,7 +6,7 @@ A customised IGV browser for Parts lab, built with [igv.js](https://igv.org/doc/
 
 ## Widgets
 
-Genome, Tracks, Session, BLAT, and Circular View start folded. Save image is always visible in one row. Scroll up over a genome track to zoom in, and scroll down to zoom out. Zoom follows the mouse pointer.
+Genome, Tracks, Session, and BLAT start folded. Save image is always visible in one row. Scroll up over a genome track to zoom in, and scroll down to zoom out. Zoom follows the mouse pointer.
 
 - **Genome:** the official IGV genome list, with human builds first and chicken included.
 - **Tracks:** local files, URLs with optional indexes, the four ENCODE categories, the current genome's annotation hub, and all collections in IGV-Web's genome-specific track registry. Source buttons open a searchable, paged multi-select list. The list loads data on demand.
@@ -14,9 +14,8 @@ Genome, Tracks, Session, BLAT, and Circular View start folded. Save image is alw
 - **Session:** load JSON/XML files, hosted session URLs, lab starter sessions, or the ten most recently loaded sessions stored in this browser. Save the current state as JSON.
 - **Save PNG / SVG:** defaults to `IGV-screenshot_<assembly>_<chromosome>_<start>-<end>`. The name updates with the view and can be edited.
 - **BLAT:** submit a DNA sequence of 20–8000 bases to IGV's UCSC BLAT service and display its native results track and table.
-- **Circular View:** show/hide IGV's JBrowse circular view, set its size, and clear chords. Native track actions send supported VCF, BAM/CRAM and interaction data to it.
 
-Genomes and track catalogues come from the same official registries used by [IGV-Web](https://igv.org/app/), through their IGV-team GitHub mirrors. Catalogue availability and BLAT results depend on their upstream services. The site uses the existing igv.js 3.8.10 API for genome loading, sessions, images, BLAT, and circular-view integration. Circular View loads the same React 16.14 and JBrowse 1.6.9 dependencies as IGV-Web when first opened.
+Genomes and track catalogues come from the same official registries used by [IGV-Web](https://igv.org/app/), through their IGV-team GitHub mirrors. Catalogue availability and BLAT results depend on their upstream services. The site uses the existing igv.js 3.8.10 API for genome loading, sessions, images, and BLAT.
 
 ## HAP-1 ENCODE-rE2G highlighting
 
