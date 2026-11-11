@@ -1,0 +1,20 @@
+#widgets [hidden] { display: none !important; }
+body { margin: 8px; }
+#widgets { font: 13px system-ui, sans-serif; border: 1px solid #ccc; padding: 8px; }
+#widgets fieldset { border: 1px solid #ddd; margin-top: 8px; }
+#widgets .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 5px 0; }
+#widgets label { display: inline-flex; align-items: center; gap: 5px; }
+#widgets input, #widgets select, #widgets button, #widgets textarea { font: inherit; }
+#widgets input[type=url] { width: 185px; }
+#share-url { width: 220px; }
+#image-name { width: 280px; }
+#genome { max-width: 280px; }
+#session-list { max-width: 240px; }
+#circular-size { width: 65px; }
+#track-results { width: 100%; margin: 5px 0; }
+#track-sources button[aria-pressed=true] { background: #e1eaf4; }
+#status { font: 13px system-ui, sans-serif; margin: 7px 0; overflow-wrap: anywhere; }
+#circular { max-width: 100%; overflow: auto; }
+.igv-circview-toolbar { display: flex; gap: 8px; font: 12px system-ui, sans-serif; }
+.igv-circview-toolbar-button-container { display: flex; gap: 8px; }
+.igv-circview-button { cursor: pointer; padding: 4px; border: 1px solid #ccc; }

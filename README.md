@@ -1,8 +1,26 @@
 # IGV Browser
 
-A minimal [igv.js](https://igv.org/doc/igvjs/) page using the original IGV interface and human hg38.
+A standalone [igv.js](https://igv.org/doc/igvjs/) browser with direct widgets for the requested IGV-Web functions.
 
 [Open the browser](https://eit-gbi.github.io/igv-browser/).
+
+## Widgets
+
+- **Genome:** the official IGV genome list, with human builds first and chicken included.
+- **Tracks:** local files, URLs with optional indexes, the four ENCODE categories, the current genome's annotation hub, and all collections in IGV-Web's genome-specific track registry. Source buttons open a searchable, paged multi-select list. The list loads data on demand.
+- **Session:** load JSON/XML files, hosted session URLs, lab starter sessions, or the ten most recently loaded sessions stored in this browser. Save the current state as JSON.
+- **Share:** copy a link containing the current session. **Bookmark:** put that session link into the address bar, then use Command+D or Ctrl+D to save a browser bookmark.
+- **Save PNG / SVG:** defaults to `IGV-screenshot_<assembly>_<chromosome>_<start>-<end>`. The name updates with the view and can be edited.
+- **BLAT:** submit a DNA sequence of 20–8000 bases to IGV's UCSC BLAT service and display its native results track and table.
+- **Circular View:** show/hide IGV's JBrowse circular view, set its size, and clear chords. Native track actions send supported VCF, BAM/CRAM and interaction data to it.
+
+Genomes and track catalogues come from the same official registries used by [IGV-Web](https://igv.org/app/), through their IGV-team GitHub mirrors. Catalogue availability and BLAT results depend on their upstream services. The site uses the existing igv.js 3.8.10 API for genome loading, sessions, images, BLAT, and circular-view integration. Circular View loads the same React 16.14 and JBrowse 1.6.9 dependencies as IGV-Web when first opened.
+
+## Lab sessions
+
+`docs/sessions.json` is the starter-session registry. It currently points to `docs/sessions/parts-hg38.json`, a human hg38 starting view at TP53. Add a record with `label` and `url` to offer another lab or hosted personal session. Individual session URLs can also be loaded directly from the widget.
+
+Saved sessions and share links contain data references. Remote tracks require accessible data URLs; local tracks require the recipient's files and folder access. IGV presents its own warning when saving local-file references. Reopen the local tracks folder to restore those tracks. A session link takes precedence over automatic local-folder loading at startup.
 
 ## Saved local tracks
 
@@ -20,6 +38,10 @@ The repository defaults describe `RNAseq_HAP1_c12_R1.bw`, the HAP1 c12 R1 RNA-se
 
 ## Customise and deploy
 
-Edit `docs/index.html` for the initial genome and locus. Edit `docs/tracks.json` for default tracks. GitHub Pages publishes `/docs` from `main` after each push.
+Edit `docs/app.js` for the initial genome and locus. Edit `docs/tracks.json` for default tracks. GitHub Pages publishes `/docs` from `main` after each push.
 
 igv.js is pinned to 3.8.10 and loaded from jsDelivr. Site code and igv.js are MIT licensed.
+
+## Validation
+
+Run `node --test tests/widgets.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, and file/index pairing. Serve `docs/` with a static HTTP server for browser testing.
