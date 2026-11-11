@@ -1,5 +1,5 @@
 #widgets [hidden] { display: none !important; }
-body { margin: 8px; }
+body { margin: 5vh 5vw; }
 #widgets { font: 13px system-ui, sans-serif; border: 0; padding: 0; margin: 0; min-width: 0; }
 #widgets details { border: 1px solid #ddd; margin: 5px 0; padding: 7px; }
 #widgets summary { cursor: pointer; font-weight: 600; }
