@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {e2gTrackRole, sameElement, predictionMatchesElement, installE2GHighlighting, fadedColor, highlightedColor} from '../docs/e2g-highlighting.mjs';
+import {e2gTrackRole, sameElement, predictionMatchesElement, installE2GHighlighting, fadedColor, highlightedColor, incomingColor, outgoingColor, predictionDirection} from '../docs/e2g-highlighting.mjs';
 
 const element = {chr:'chr1',start:778479,end:778979};
 const otherElement = {chr:'chr1',start:827272,end:827840};
@@ -27,10 +27,14 @@ test('track identification is restricted to the requested HAP-1 sample and model
   const f=fixture();assert.equal(e2gTrackRole(f.elements.track),'elements');assert.equal(e2gTrackRole(f.predictions.track),'predictions');assert.equal(e2gTrackRole(f.unrelated.track),undefined);
   assert.equal(e2gTrackRole({...f.elements.track,config:{metadata:{...f.elements.track.config.metadata,model:'ABC'}}}),undefined);
 });
-test('links match the exact enhancer anchor and chromosome, including IGV feature wrappers',()=>{
+test('links match either overlapping endpoint on the same chromosome, including IGV wrappers',()=>{
   assert.equal(predictionMatchesElement(link,element),true);
   assert.equal(predictionMatchesElement({_:{...link,chr1:'1'}},{_f:element}),true);
-  for(const candidate of [{...element,chr:'chr2'},{...element,start:778480},{chr:'chr1',start:827522,end:827523}])assert.equal(predictionMatchesElement(link,candidate),false);
+  assert.equal(predictionMatchesElement(link,{...element,start:778480}),true);
+  assert.equal(predictionMatchesElement(link,otherElement),true);
+  assert.equal(predictionMatchesElement(link,{chr:'chr1',start:827522,end:827523}),true);
+  for(const candidate of [{...element,chr:'chr2'},{chr:'chr1',start:778979,end:779000},{chr:'chr1',start:827523,end:827600},{chr:'chr1',start:778000,end:778479}])assert.equal(predictionMatchesElement(link,candidate),false);
+  assert.equal(predictionMatchesElement({...link,chr2:'chr2'},otherElement),false);
   assert.equal(sameElement({},{}),false);assert.equal(sameElement(undefined,element),false);
 });
 test('element click highlights its links, suppresses its popup and preserves unrelated tracks',()=>{
@@ -40,7 +44,7 @@ test('element click highlights its links, suppresses its popup and preserves unr
   assert.equal(f.click([element],f.unrelated.track),undefined);
   assert.equal(f.elements.track.getColorForFeature(element),highlightedColor);
   assert.equal(f.elements.track.getColorForFeature(otherElement),fadedColor);
-  assert.equal(f.predictions.track.getColor(link),'red');assert.equal(f.predictions.track.getColor(otherLink),fadedColor);
+  assert.equal(f.predictions.track.getColor(link),outgoingColor);assert.equal(f.predictions.track.getColor(otherLink),fadedColor);
   assert.equal(f.unrelated.track.getColorForFeature(otherElement),'darkgrey');assert.deepEqual(f.elements.track.config,config);
   assert.equal(f.repaints.length,2);
 });
@@ -56,7 +60,7 @@ test('repeated or empty clicks restore colours and clicks in unrelated tracks pr
 test('selection matches fresh feature objects after panning and applies to tracks added later',()=>{
   const f=fixture();f.click();assert.equal(f.elements.track.getColorForFeature({...element}),highlightedColor);
   const late=f.view('predictions');f.browser.trackViews.push(late);f.emit('trackorderchanged');assert.equal(late.track.getColor(otherLink),fadedColor);assert.ok(f.repaints.includes(late.track));
-  f.emit('trackorderchanged');assert.equal(late.track.getColor(link),'red');
+  f.emit('trackorderchanged');assert.equal(late.track.getColor(link),outgoingColor);
 });
 test('removing the selected element track or switching genomes clears transient highlighting',()=>{
   const f=fixture();f.click();f.browser.trackViews.splice(0,1);f.emit('trackremoved',f.elements.track);assert.equal(f.predictions.track.getColor(otherLink),'red');
@@ -68,4 +72,23 @@ test('prediction defaults use one end in view and preserve an explicitly saved a
   const saved=f.view('predictions');saved.track.config.arcType='nested';saved.track.arcType='nested';
   f.browser.trackViews.push(saved);f.emit('trackorderchanged');assert.equal(saved.track.arcType,'nested');
   f.predictions.track.arcType='inView';f.emit('trackorderchanged');assert.equal(f.predictions.track.arcType,'inView');
+});
+
+test('incoming and outgoing links share highlighting and paint above unrelated links',()=>{
+  const f=fixture();f.click();
+  const incoming={chr1:'chr1',start1:900000,end1:900500,chr2:'chr1',start2:778700,end2:778701};
+  assert.equal(f.predictions.track.getColor(incoming),incomingColor);
+  assert.equal(f.predictions.track.getColor(link),outgoingColor);
+  assert.equal(f.predictions.track.getColor(otherLink),fadedColor);
+  f.predictions.track.draw({features:[incoming,otherLink,link]});
+  assert.deepEqual(f.draws[0].features,[otherLink,incoming,link]);
+});
+
+test('direction is relative to the selected interval, with incoming red for self-links',()=>{
+  assert.equal(predictionDirection(link,element),'outgoing');
+  assert.equal(predictionDirection(link,otherElement),'incoming');
+  const self={...link,start2:778700,end2:778701};
+  assert.equal(predictionDirection(self,element),'incoming');
+  const f=fixture();f.click();assert.equal(f.predictions.track.getColor(self),incomingColor);
+  assert.equal(predictionDirection({...link,chr2:'chr2'},otherElement),undefined);
 });

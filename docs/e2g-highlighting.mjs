@@ -2,6 +2,8 @@ const sample = 'HAP-1_ENCSR895KTN';
 const model = 'ENCODE-rE2G';
 export const fadedColor = 'rgb(238,238,238)';
 export const highlightedColor = '#FF0000';
+export const incomingColor = '#FF0000';
+export const outgoingColor = '#FF8C00';
 
 export function e2gTrackRole(track) {
   const metadata = track.config?.metadata;
@@ -17,11 +19,22 @@ export function sameElement(a, b, chromosome = chr => String(chr).replace(/^chr/
   return Boolean(a && b && Number.isFinite(a.start) && a.end > a.start && chromosome(a.chr) === chromosome(b.chr) && a.start === b.start && a.end === b.end);
 }
 
-export function predictionMatchesElement(prediction, element, chromosome) {
+export function predictionDirection(prediction, element, chromosome = chr => String(chr).replace(/^chr/i, '').toLowerCase()) {
   const link = featureRecord(prediction);
-  if (!link || !element) return false;
-  // This dataset's first BEDPE anchor is the candidate element; its second is the target TSS.
-  return sameElement({chr:link.chr1, start:link.start1, end:link.end1}, element, chromosome);
+  element = featureRecord(element);
+  if (!link || !element || !Number.isFinite(element.start) || element.end <= element.start) return;
+  const overlaps = end => {
+    const start = link[`start${end}`], stop = link[`end${end}`];
+    return Number.isFinite(start) && stop > start && chromosome(link[`chr${end}`]) === chromosome(element.chr)
+      && start < element.end && stop > element.start;
+  };
+  // BEDPE stores the enhancer first and target TSS second. Self-links use incoming red.
+  if (overlaps(2)) return 'incoming';
+  if (overlaps(1)) return 'outgoing';
+}
+
+export function predictionMatchesElement(prediction, element, chromosome) {
+  return Boolean(predictionDirection(prediction, element, chromosome));
 }
 
 export function installE2GHighlighting(browser) {
@@ -50,8 +63,9 @@ export function installE2GHighlighting(browser) {
         }
         const color = track.getColor, draw = track.draw;
         track.getColor = function(feature, ...args) {
-          return !selected || predictionMatchesElement(feature, selected, chromosome)
-            ? color.call(this, feature, ...args) : fadedColor;
+          if (!selected) return color.call(this, feature, ...args);
+          const direction = predictionDirection(feature, selected, chromosome);
+          return direction === 'incoming' ? incomingColor : direction === 'outgoing' ? outgoingColor : fadedColor;
         };
         track.draw = function(options) {
           if (!selected || !options.features) return draw.call(this, options);
