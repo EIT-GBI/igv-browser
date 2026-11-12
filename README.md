@@ -6,10 +6,10 @@ A customised IGV browser for Parts lab, built with [igv.js](https://igv.org/doc/
 
 ## Widgets
 
-Genome, Tracks, Session, and BLAT start folded. Save image is always visible in one row. Scroll up over a genome track to zoom in, and scroll down to zoom out. Zoom follows the mouse pointer.
+Genome, Tracks, Session, and BLAT start folded. Save image is always visible in one row. Scroll up over a genome track to zoom in, and scroll down to zoom out. Zoom follows the mouse pointer. Right-click a track feature, or left-click an ROI header, and choose **Zoom in** to fit that interval in the current view.
 
 - **Genome:** the official IGV genome list, with human builds first and chicken included.
-- **Tracks:** local files, URLs with optional indexes, the four ENCODE categories, the current genome's annotation hub, and all collections in IGV-Web's genome-specific track registry. Source buttons open a searchable, paged multi-select list. The list loads data on demand.
+- **Tracks:** local files, URLs with optional indexes, the four ENCODE categories, **Hosted Annotations** from the current genome's official IGV hub, and all collections in IGV-Web's genome-specific track registry. Source buttons open a searchable, paged multi-select list. The list loads data on demand.
 - **Group scaling:** use the checkboxes beside signal-track names to select multiple bigWig, wig, or bedGraph tracks. Click a track name to view its metadata. With tracks selected, press **S** to toggle the floating scaling panel. It closes when the selection is cleared; its close button and Escape also dismiss it. **Group autoscale** shares the visible data range and updates on pan/zoom. **Apply group range** assigns the same minimum and maximum to the selected tracks. Selected tracks have blue outlines. **Clear selection** clears the selection while preserving scaling. Scaling is included in saved session JSON.
 - **Session:** load JSON/XML files, hosted session URLs, lab starter sessions, or the ten most recently loaded sessions stored in this browser. Save the current state as JSON.
 - **Save PNG / SVG:** defaults to `IGV-screenshot_<assembly>_<chromosome>_<start>-<end>`. The name updates with the view and can be edited.
@@ -51,4 +51,4 @@ Inline annotation tracks use the same compact interval renderer as the Parts app
 
 ## Validation
 
-Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs tests/group-scaling.test.mjs tests/annotation-seams.test.mjs tests/e2g-highlighting.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, wheel zoom, shared scaling, and annotation rendering. Serve `docs/` with a static HTTP server for browser testing.
+Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs tests/group-scaling.test.mjs tests/annotation-seams.test.mjs tests/e2g-highlighting.test.mjs tests/region-zoom.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, wheel zoom, shared scaling, and annotation rendering. Serve `docs/` with a static HTTP server for browser testing.

@@ -3,6 +3,7 @@ import {initializeLocalTracks} from './local-tracks.js';
 import {installGroupScaling, scaleSelectedTracks} from './group-scaling.mjs?v=label-anchor-1';
 import {installE2GHighlighting} from './e2g-highlighting.mjs?v=direction-colors-1';
 import {installAnnotationSeamFix} from './annotation-seams.mjs';
+import {installRegionZoom} from './region-zoom.mjs?v=roi-left-1';
 import {installWheelZoom} from './wheel-zoom.mjs';
 import {imageBasename, dnaSequence, parseTable, canonicalGenome, encodeTrack, flattenGroups, localFileConfigs} from './widget-utils.mjs';
 
@@ -112,10 +113,12 @@ function populateTrackSources() {
       sourceButton(label, {encode:`https://raw.githubusercontent.com/igvteam/igv-data/refs/heads/main/data/encode/${canonical}.${type}.txt`}, id);
     }
   }
-  const paths = [...new Set([...(registry[id] || []), ...(browser.genome.getHubURLs?.() || [])])].filter(path => path !== '---');
+  const genomeHubs = [...(browser.genome.getHubURLs?.() || []), ...(genomes.find(genome => genome.id === id)?.hubs || [])];
+  const paths = [...new Set([...genomeHubs, ...(registry[id] || [])])].filter(path => path !== '---');
   for (const path of paths) {
     const labels = [['gtexAnalysis','GTEx tracks'],['snp/population','dbSNP population frequencies'],['dbvar','dbVar'],['FunctionalElements','RefSeq functional elements'],['_gtex.json','GTEx single-tissue eQTLs'],['_4dn.json','4DN tracks'],['_1KG','1000 Genomes alignments']];
-    const label = labels.find(([key]) => path.toLowerCase().includes(key.toLowerCase()))?.[1] || 'Genome annotation hub';
+    const hosted = /\/genomes\/hubs\/[^/]+\/hub\.txt(?:[?#]|$)/.test(path);
+    const label = hosted ? 'Hosted Annotations' : labels.find(([key]) => path.toLowerCase().includes(key.toLowerCase()))?.[1] || 'Genome annotation hub';
     sourceButton(label, {url:new URL(path, upstream).href}, id);
   }
 }
@@ -165,6 +168,7 @@ async function start() {
   installWheelZoom($('igv'), browser, error => message(error.message || String(error)));
   installAnnotationSeamFix(browser);
   installE2GHighlighting(browser);
+  installRegionZoom(browser, error => message(error.message || String(error)));
   scaling = installGroupScaling(browser, {row:$('scale-section'), count:$('scale-count'), auto:$('scale-auto'), apply:$('scale-apply'), clear:$('scale-clear'), close:$('scale-close'), min:$('scale-min'), max:$('scale-max')});
   const resources = await Promise.allSettled([json(upstream+'resources/tracks/trackRegistry.json'),json('sessions.json')]);
   if (resources[0].status === 'fulfilled') registry = resources[0].value;
