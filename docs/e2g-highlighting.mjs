@@ -4,6 +4,7 @@ export const fadedColor = 'rgb(238,238,238)';
 export const highlightedColor = '#FF0000';
 export const incomingColor = '#FF0000';
 export const outgoingColor = '#FF8C00';
+export const predictionHint = 'With an element selected:\nIncoming: red (enhancers → selected target gene).\nOutgoing: orange (selected enhancer → target genes).';
 
 export function e2gTrackRole(track) {
   const metadata = track.config?.metadata;
@@ -47,6 +48,12 @@ export function installE2GHighlighting(browser) {
   function sync() {
     for (const view of views()) {
       const {track} = view;
+      if (e2gTrackRole(track) === 'predictions') {
+        for (const viewport of view.viewports || []) {
+          viewport.viewportElement.title = predictionHint;
+          if (viewport.trackLabelElement) viewport.trackLabelElement.title = `${track.name || 'E2G Predictions'}\n${predictionHint}`;
+        }
+      }
       let needsRepaint = false;
       if (patched.has(track)) continue;
       patched.add(track);
@@ -92,6 +99,8 @@ export function installE2GHighlighting(browser) {
     return false; // Element clicks control highlighting without opening IGV's feature popup.
   });
   browser.on('trackorderchanged', sync);
+  browser.on('locuschange', sync);
+  browser.on('columnlayoutchange', () => queueMicrotask(sync));
   browser.on('trackremoved', track => {
     if (track === sourceTrack) { selected = sourceTrack = undefined; repaint(); }
   });

@@ -1,7 +1,7 @@
 import igv from 'https://cdn.jsdelivr.net/npm/igv@3.8.10/dist/igv.esm.min.js';
 import {initializeLocalTracks} from './local-tracks.js';
 import {installGroupScaling, scaleSelectedTracks} from './group-scaling.mjs?v=label-anchor-1';
-import {installE2GHighlighting} from './e2g-highlighting.mjs?v=direction-colors-1';
+import {installE2GHighlighting} from './e2g-highlighting.mjs?v=direction-hint-1';
 import {installAnnotationSeamFix} from './annotation-seams.mjs';
 import {installRegionZoom} from './region-zoom.mjs?v=roi-left-1';
 import {installWheelZoom} from './wheel-zoom.mjs';

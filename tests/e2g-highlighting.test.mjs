@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {e2gTrackRole, sameElement, predictionMatchesElement, installE2GHighlighting, fadedColor, highlightedColor, incomingColor, outgoingColor, predictionDirection} from '../docs/e2g-highlighting.mjs';
+import {e2gTrackRole, sameElement, predictionMatchesElement, installE2GHighlighting, fadedColor, highlightedColor, incomingColor, outgoingColor, predictionDirection, predictionHint} from '../docs/e2g-highlighting.mjs';
 
 const element = {chr:'chr1',start:778479,end:778979};
 const otherElement = {chr:'chr1',start:827272,end:827840};
@@ -91,4 +91,17 @@ test('direction is relative to the selected interval, with incoming red for self
   assert.equal(predictionDirection(self,element),'incoming');
   const f=fixture();f.click();assert.equal(f.predictions.track.getColor(self),incomingColor);
   assert.equal(predictionDirection({...link,chr2:'chr2'},otherElement),undefined);
+});
+
+test('prediction hover hints show both directions and survive viewport replacement',()=>{
+  const f=fixture();
+  const viewport=()=>({viewportElement:{title:''},trackLabelElement:{title:''}});
+  f.predictions.viewports=[viewport()];f.elements.viewports=[viewport()];
+  f.emit('trackorderchanged');
+  assert.equal(f.predictions.viewports[0].viewportElement.title,predictionHint);
+  assert.match(f.predictions.viewports[0].trackLabelElement.title,/Incoming: red/);
+  assert.match(f.predictions.viewports[0].trackLabelElement.title,/Outgoing: orange/);
+  assert.equal(f.elements.viewports[0].viewportElement.title,'');
+  f.predictions.viewports=[viewport()];f.emit('locuschange');
+  assert.equal(f.predictions.viewports[0].viewportElement.title,predictionHint);
 });
