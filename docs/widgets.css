@@ -18,14 +18,17 @@ body { margin: 8px 5vw; }
 #track-sources button[aria-pressed=true] { background: #e1eaf4; }
 #status { font: 13px system-ui, sans-serif; margin: 7px 0; overflow-wrap: anywhere; }
 
-#scale-section input { width: 75px; }
+#scale-section input { box-sizing: border-box; width: 60px; min-width: 0; }
 
 #widgets #scale-section {
   position: fixed; left: 5vw; top: 0; z-index: 10000;
-  box-sizing: border-box; width: 310px; max-width: 90vw;
+  display: flex; flex-direction: column; gap: 8px;
+  box-sizing: border-box; width: 340px; max-width: 90vw;
   margin: 0; padding: 12px; border: 1px solid #bbb; border-radius: 5px;
   background: white; box-shadow: 0 3px 16px #0003;
 }
 #scale-section strong { flex: 1; }
 #scale-close { border: 0; background: transparent; cursor: pointer; }
-#scale-count { flex-basis: 100%; }
+#scale-section .scale-line { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+#scale-section .scale-range label { min-width: 0; }
+#scale-section button { flex-shrink: 0; white-space: nowrap; }

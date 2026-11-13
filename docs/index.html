@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IGV</title>
-  <link rel="stylesheet" href="widgets.css?v=remove-circular-1">
+  <link rel="stylesheet" href="widgets.css?v=scaling-rows-1">
 </head>
 <body>
   <fieldset id="widgets" disabled>
@@ -53,13 +53,17 @@
         <button id="blat">Run BLAT</button><small>Sends the sequence to UCSC through IGV’s BLAT service.</small>
       </div>
     </details>
-    <div id="scale-section" class="row" role="group" aria-label="Group scaling" hidden>
-      <strong>Group scaling</strong><button id="scale-close" type="button" aria-label="Close group scaling">×</button>
+    <div id="scale-section" role="group" aria-label="Group scaling" hidden>
+      <div class="scale-line"><strong>Group scaling</strong><button id="scale-close" type="button" aria-label="Close group scaling">×</button></div>
       <span id="scale-count" aria-live="polite">0 selected</span>
-      <button id="scale-auto" disabled>Group autoscale</button>
-      <label>Min <input id="scale-min" type="number" step="any" value="0" aria-label="Group minimum"></label>
-      <label>Max <input id="scale-max" type="number" step="any" value="100" aria-label="Group maximum"></label>
-      <button id="scale-apply" disabled>Apply group range</button><button id="scale-clear" disabled>Clear selection</button>
+      <div class="scale-line">
+        <button id="scale-auto" disabled>Group autoscale</button><button id="scale-clear" disabled>Unselect all</button>
+      </div>
+      <div class="scale-line scale-range">
+        <label>Min <input id="scale-min" type="number" step="any" value="0" aria-label="Group minimum"></label>
+        <label>Max <input id="scale-max" type="number" step="any" value="100" aria-label="Group maximum"></label>
+        <button id="scale-apply" disabled>Apply group range</button>
+      </div>
     </div>
   </fieldset>
   <p id="status" role="status">Loading IGV…</p>
