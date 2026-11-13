@@ -98,7 +98,12 @@ export function installGroupScaling(browser, controls) {
     if (!input) return;
     return signalTrackViews(browser).find(view => view.viewports.some(viewport => viewport.trackLabelElement?.contains(input)));
   }
+  function focusSelection(event) {
+    const input = event.composedPath().find(element => element.matches?.('input[data-scale-select], input[name=track-select]'));
+    input?.focus({preventScroll:true});
+  }
   root.addEventListener('click', event => {
+    focusSelection(event);
     const view = checkboxView(event);
     if (view) {
       // The checkbox owns selection; the label keeps IGV's metadata click handler.
@@ -109,7 +114,10 @@ export function installGroupScaling(browser, controls) {
     // IGV's native selection toggle can also clear track selection.
     queueMicrotask(sync);
   }, true);
-  root.addEventListener('mousedown', event => { if (checkboxView(event)) event.stopPropagation(); }, true);
+  root.addEventListener('mousedown', event => {
+    focusSelection(event);
+    if (checkboxView(event)) event.stopPropagation();
+  }, true);
   root.addEventListener('change', () => queueMicrotask(sync), true);
   root.addEventListener('scroll', position, true);
   root.ownerDocument.addEventListener('scroll', position, true);

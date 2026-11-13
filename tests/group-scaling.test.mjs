@@ -75,3 +75,27 @@ test('floating panel sits beside its label and stays within the viewport',()=>{
   assert.deepEqual(scalingPanelPosition({right:900,top:760},{width:310,height:150},{width:1000,height:800}),{left:682,top:642});
   assert.deepEqual(scalingPanelPosition({right:100,top:-10},{width:310,height:150},{width:350,height:800}),{left:32,top:8});
 });
+
+test('selecting a track transfers focus from text entry and enables the scaling shortcut',()=>{
+  const rootListeners = new Map(), documentListeners = new Map();
+  const control = () => ({addEventListener(){}});
+  const text = {value:'chr17:7,660,001-7,680,000',matches:selector=>selector.startsWith('textarea, select,')};
+  let active = text;
+  const focusOptions = [];
+  const checkbox = {
+    matches:selector=>selector === 'input[data-scale-select], input[name=track-select]',
+    focus(options){active=this;focusOptions.push(options);}
+  };
+  const doc = {createElement:()=>({}),addEventListener(name,handler){documentListeners.set(name,handler);}};
+  const browser = {root:{ownerDocument:doc,appendChild(){},addEventListener(name,handler){rootListeners.set(name,handler);}},trackViews:[{track:{type:'wig',selected:true},viewports:[],setDragHandleSelectionState(){}}],on(){}};
+  const controls = Object.fromEntries(['row','count','auto','apply','clear','close','min','max'].map(name=>[name,control()]));
+  installGroupScaling(browser,controls);
+  const shortcut=()=>documentListeners.get('keydown')({key:'s',composedPath:()=>[active],preventDefault(){}});
+  shortcut();assert.equal(controls.row.hidden,true);
+  rootListeners.get('mousedown')({composedPath:()=>[checkbox]});
+  assert.equal(active,checkbox);assert.deepEqual(focusOptions,[{preventScroll:true}]);
+  shortcut();assert.equal(controls.row.hidden,false);assert.equal(text.value,'chr17:7,660,001-7,680,000');
+  active=text;
+  rootListeners.get('click')({composedPath:()=>[text]});assert.equal(active,text);
+  rootListeners.get('click')({composedPath:()=>[checkbox]});assert.equal(active,checkbox);
+});
