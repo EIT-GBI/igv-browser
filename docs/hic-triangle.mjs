@@ -71,9 +71,8 @@ function drawTriangle(options) {
   ctx.restore();
 }
 
-export function installHicTriangle(browser, {row, select, key, onError = console.error} = {}) {
+export function installHicTriangle(browser, {row, onError = console.error} = {}) {
   const patched = new WeakSet();
-  const triangle = track => track.config.hicDisplay !== 'arcs';
   const refresh = track => {
     track.trackView.clearCachedFeatures();
     Promise.resolve(track.trackView.updateViews()).catch(onError);
@@ -81,47 +80,36 @@ export function installHicTriangle(browser, {row, select, key, onError = console
   function sync() {
     const tracks = browser.trackViews.map(view=>view.track).filter(isHicTrack);
     if (row) row.hidden = tracks.length === 0;
-    if (select && tracks.length) select.value = triangle(tracks[0]) ? 'triangle' : 'arcs';
-    if (key) key.hidden = select?.value === 'arcs';
     for (const track of tracks) {
       if (patched.has(track)) continue;
       patched.add(track);
-      track.config.hicDisplay ??= 'triangle';
+      track.config.hicDisplay = 'triangle';
       if (track.config.height === undefined) {
         track.height = 350;
         track.trackView.setTrackHeight(350);
       }
-      const source = track.featureSource, getFeatures = source.getFeatures;
+      const source = track.featureSource;
       source.getFeatures = function(options) {
-        return triangle(track) ? matrixFeatures(this,options) : getFeatures.call(this,options);
+        return matrixFeatures(this,options);
       };
-      const draw = track.draw, clicked = track.clickedFeatures, axis = track.paintAxis, menu = track.menuItemList;
+      const menu = track.menuItemList;
       track.draw = function(options) {
-        return triangle(this) ? drawTriangle(options) : draw.call(this,options);
+        return drawTriangle(options);
       };
       track.clickedFeatures = function(state) {
-        return triangle(this) ? triangleHits(state,this.height) : clicked.call(this,state);
+        return triangleHits(state,this.height);
       };
       track.paintAxis = function(ctx,width,height) {
-        if (triangle(this)) { ctx.fillStyle='white'; ctx.fillRect(0,0,width,height); }
-        else axis.call(this,ctx,width,height);
+        ctx.fillStyle='white'; ctx.fillRect(0,0,width,height);
       };
       track.menuItemList = function() {
         const items = menu.call(this);
-        if (!triangle(this)) return items;
         const normalization = items.indexOf('<b>Normalization</b>');
         return normalization >= 0 ? items.slice(normalization) : [];
       };
       refresh(track);
     }
   }
-  select?.addEventListener('change', () => {
-    if (key) key.hidden = select.value === 'arcs';
-    for (const {track} of browser.trackViews) if (isHicTrack(track)) {
-      track.config.hicDisplay = select.value;
-      refresh(track);
-    }
-  });
   for (const event of ['trackorderchanged','trackremoved','genomechange']) browser.on(event,sync);
   sync();
 }
