@@ -5,7 +5,26 @@ export function isHicTrack(track) {
 
 export function hicResolution(resolutions, bpPerPixel) {
   const sorted = [...resolutions].sort((a,b) => a-b);
-  return sorted.find(size => size >= bpPerPixel * 2) || sorted.at(-1);
+  return sorted.find(size => size >= bpPerPixel) || sorted.at(-1);
+}
+
+function updateResolutionLabels(track) {
+  const resolutions = track.featureSource.hicFile.bpResolutions;
+  if (!resolutions?.length) return;
+  for (const viewport of track.trackView.viewports || []) {
+    const label = viewport.trackLabelElement;
+    if (!label || !viewport.referenceFrame) continue;
+    const size = hicResolution(resolutions, viewport.referenceFrame.bpPerPixel);
+    let badge = label.querySelector('.hic-resolution');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'hic-resolution';
+      badge.style.cssText = 'margin-left:6px;font-size:10px;color:#555';
+      label.appendChild(badge);
+    }
+    badge.textContent = size >= 1000 ? `${size/1000} kb bins` : `${size} bp bins`;
+    badge.title = 'Hi-C matrix bin size; automatically follows genomic zoom.';
+  }
 }
 
 export async function matrixFeatures(source, {chr, start, end, bpPerPixel, normalization}) {
@@ -94,6 +113,7 @@ export function installHicTriangle(browser, {row, onError = console.error} = {})
       };
       const menu = track.menuItemList;
       track.draw = function(options) {
+        updateResolutionLabels(this);
         return drawTriangle(options);
       };
       track.clickedFeatures = function(state) {

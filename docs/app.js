@@ -1,5 +1,5 @@
 import igv from 'https://cdn.jsdelivr.net/npm/igv@3.8.10/dist/igv.esm.min.js';
-import {installHicTriangle} from './hic-triangle.mjs?v=triangle-only-1';
+import {installHicTriangle} from './hic-triangle.mjs?v=resolution-1';
 import {initializeLocalTracks} from './local-tracks.js';
 import {installGroupScaling, scaleSelectedTracks} from './group-scaling.mjs?v=selection-focus-1';
 import {installE2GHighlighting} from './e2g-highlighting.mjs?v=direction-hint-1';

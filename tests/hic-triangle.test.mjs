@@ -6,6 +6,8 @@ test('resolution follows zoom while bounding matrix density',()=>{
   assert.equal(hicResolution([10000,1000,5000],2000),5000);
   assert.equal(hicResolution([10000,1000,5000],100),1000);
   assert.equal(hicResolution([10000,1000],50000),10000);
+  assert.equal(hicResolution([10000,5000],4800),5000);
+  assert.equal(hicResolution([2000,1000,500],800),1000);
 });
 test('matrix retains diagonal and low-count contacts and applies normalization to both bins',async()=>{
   const source={hicFile:{initialized:true,bpResolutions:[10]},genome:{getChromosomeName:()=> 'chr1'},
