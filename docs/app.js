@@ -1,4 +1,5 @@
 import igv from 'https://cdn.jsdelivr.net/npm/igv@3.8.10/dist/igv.esm.min.js';
+import {installHicTriangle} from './hic-triangle.mjs?v=triangle-1';
 import {initializeLocalTracks} from './local-tracks.js';
 import {installGroupScaling, scaleSelectedTracks} from './group-scaling.mjs?v=selection-focus-1';
 import {installE2GHighlighting} from './e2g-highlighting.mjs?v=direction-hint-1';
@@ -168,6 +169,7 @@ async function start() {
   installWheelZoom($('igv'), browser, error => message(error.message || String(error)));
   installAnnotationSeamFix(browser);
   installE2GHighlighting(browser);
+  installHicTriangle(browser, {row:$('hic-view-row'), select:$('hic-view'), key:$('hic-scale-key'), onError:error=>message(error.message || String(error))});
   installRegionZoom(browser, error => message(error.message || String(error)));
   scaling = installGroupScaling(browser, {row:$('scale-section'), count:$('scale-count'), auto:$('scale-auto'), apply:$('scale-apply'), clear:$('scale-clear'), close:$('scale-close'), min:$('scale-min'), max:$('scale-max')});
   const resources = await Promise.allSettled([json(upstream+'resources/tracks/trackRegistry.json'),json('sessions.json')]);

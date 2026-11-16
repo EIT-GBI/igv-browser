@@ -24,6 +24,10 @@
         <input id="track-index" type="url" aria-label="Track index URL" placeholder="Index URL (optional)">
         <button id="load-track-url">Load track URL</button>
       </div>
+      <div id="hic-view-row" class="row" hidden>
+        <label>Hi-C view <select id="hic-view" aria-label="Hi-C view"><option value="triangle">45° triangle heatmap</option><option value="arcs">Arcs</option></select></label>
+        <small id="hic-scale-key">Contact intensity: white → red · autoscaled to the 95th percentile.</small>
+      </div>
       <div id="track-sources" class="row" aria-label="Track sources"></div>
       <div id="catalogue" hidden>
         <div class="row"><strong id="catalogue-title"></strong><input id="track-search" type="search" aria-label="Search tracks" placeholder="Search tracks"><span id="track-count"></span><button id="previous-tracks">Previous</button><button id="next-tracks">Next</button></div>
@@ -68,6 +72,6 @@
   </fieldset>
   <p id="status" role="status">Loading IGV…</p>
   <div id="igv"></div>
-  <script type="module" src="app.js?v=selection-focus-1"></script>
+  <script type="module" src="app.js?v=hic-triangle-1"></script>
 </body>
 </html>

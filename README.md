@@ -17,6 +17,12 @@ Genome, Tracks, Session, and BLAT start folded. Save image is always visible in 
 
 Genomes and track catalogues come from the same official registries used by [IGV-Web](https://igv.org/app/), through their IGV-team GitHub mirrors. Catalogue availability and BLAT results depend on their upstream services. The site uses the existing igv.js 3.8.10 API for genome loading, sessions, images, and BLAT.
 
+## Hi-C contact maps
+
+`.hic` tracks open as a 45° triangular heatmap. Load a local file, a track URL, or a selection from **ENCODE Hi-C**. The **Hi-C view** selector under Tracks switches loaded Hi-C tracks between the triangle and native arcs. Each track's display choice is stored in saved sessions as `hicDisplay` (`triangle` or `arcs`).
+
+The heatmap reads all positive contacts at the selected resolution, including the diagonal. Bin resolution follows genomic zoom. White-to-red intensity uses a linear scale saturated at the 95th percentile of rendered contacts. IGV's track normalization options remain available, and PNG/SVG export includes the heatmap. The view displays contacts within each locus; track height limits the visible genomic separation.
+
 ## HAP-1 ENCODE-rE2G highlighting
 
 For the HAP-1_ENCSR895KTN ENCODE-rE2G Elements and E2G Predictions tracks, click an element to highlight it in red, with incoming prediction links in red and outgoing links in orange. Other elements and links fade to very light grey. Hover over the prediction track or its label to see the incoming/red and outgoing/orange key. The prediction track defaults to **Proportional – One End in View**; an arc type saved explicitly in a session is retained. Links are highlighted when either BEDPE endpoint overlaps the selected element, including incoming target links and outgoing enhancer links. Click the selected element again, or an empty part of the Elements track, to restore all colours. Element clicks control highlighting; track-label clicks show metadata.
@@ -51,4 +57,4 @@ Inline annotation tracks use the same compact interval renderer as the Parts app
 
 ## Validation
 
-Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs tests/group-scaling.test.mjs tests/annotation-seams.test.mjs tests/e2g-highlighting.test.mjs tests/region-zoom.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, wheel zoom, shared scaling, and annotation rendering. Serve `docs/` with a static HTTP server for browser testing.
+Run `node --test tests/widgets.test.mjs tests/wheel-zoom.test.mjs tests/group-scaling.test.mjs tests/annotation-seams.test.mjs tests/e2g-highlighting.test.mjs tests/region-zoom.test.mjs tests/hic-triangle.test.mjs` for coordinate filenames, BLAT input, catalogue parsing, hub entries, file/index pairing, wheel zoom, shared scaling, and annotation rendering. Serve `docs/` with a static HTTP server for browser testing.
