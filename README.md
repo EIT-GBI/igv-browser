@@ -21,7 +21,9 @@ Genomes and track catalogues come from the same official registries used by [IGV
 
 `.hic` tracks open as a 45° triangular heatmap. Load a local file, a track URL, or a selection from **ENCODE Hi-C**. Hi-C tracks always use triangles, including tracks loaded from older sessions that specify an arc display. Saved sessions record `hicDisplay: "triangle"`.
 
-The heatmap reads all positive contacts at the selected resolution, including the diagonal. Bin resolution follows genomic zoom, targeting one screen pixel per bin; each track label shows the active bin size. White-to-red intensity uses a linear scale saturated at the 95th percentile of rendered contacts. IGV's track normalization options remain available, and PNG/SVG export includes the heatmap. The view displays contacts within each locus; track height limits the visible genomic separation.
+Recent normalized matrix windows are cached per track (up to three windows and 200,000 contacts), and identical concurrent requests share one load. The colour percentile uses selection without sorting the full matrix.
+
+The heatmap reads all positive contacts at the selected resolution, including the diagonal. Bin resolution follows genomic zoom, targeting four screen pixels per bin; each track label shows the active bin size. The track settings menu offers **Bin size → Automatic (zoom)** and every bin size stored in the file. A manual bin size stays fixed during zoom and is saved as `hicBinSize` in session JSON. White-to-red intensity uses a linear scale saturated at the 95th percentile of rendered contacts. IGV's track normalization options remain available, and PNG/SVG export includes the heatmap. The view displays contacts within each locus; track height limits the visible genomic separation.
 
 ## HAP-1 ENCODE-rE2G highlighting
 
